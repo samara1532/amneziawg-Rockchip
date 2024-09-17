@@ -3,12 +3,7 @@ on:
   push:
     tags:
       - "v*.*.*"
-
-jobs:
-  push:
-    tags:
-      - "v*.*.*"
-
+      
 jobs:
   build:
     name: "v${{ matrix.build_env.tag }} - ${{ matrix.build_env.pkgarch}} :: ${{ matrix.build_env.target}}/${{ matrix.build_env.subtarget}} build"
