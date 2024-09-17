@@ -1,5 +1,5 @@
 name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+run-name: ${{ github.actor }} 8.0
 on: [push]
 
 jobs:
@@ -13,7 +13,7 @@ jobs:
             pkgarch: aarch64_generic
             target: rockchip
             subtarget: armv8
-            vermagic: "b9b1527c18e0b73b84c36d3de3ae1d2d"
+            vermagic: "57fe889346919b3b1a0fcd35f543f441"
 
     steps:
       - uses: actions/checkout@v4
