@@ -3,7 +3,7 @@ name: Create Release on Tag
 on:
   push:
     tags:
-      - "23.05.3"
+      - "6.0"
 
 jobs:
   build:
