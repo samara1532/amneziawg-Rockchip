@@ -1,9 +1,9 @@
 name: Create Release on Tag2
-# on: [workflow_dispatch]
+on: [workflow_dispatch]
 on:
   push:
     tags:
-      - "2.0"
+      - "3.0"
 
 jobs:
   build:
