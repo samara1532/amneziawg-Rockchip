@@ -3,7 +3,7 @@ on: [workflow_dispatch]
 on:
   push:
     tags:
-      - "3.0"
+      - "v*.*.*"
 
 jobs:
   build:
