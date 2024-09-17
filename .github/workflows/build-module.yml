@@ -1,5 +1,4 @@
 name: Create Release on Tag
-on: [workflow_dispatch]
 on:
   push:
     tags:
