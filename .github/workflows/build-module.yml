@@ -1,7 +1,7 @@
 name: GitHub Actions Demo
 run-name: ${{ github.actor }} 8.0
  tags: 
-  - "v*.*.*"
+  - "8.0"
   on: [push]
 jobs:
 
@@ -15,12 +15,12 @@ jobs:
             pkgarch: aarch64_generic
             target: rockchip
             subtarget: armv8
-            vermagic: "57fe889346919b3b1a0fcd35f543f441"
+            vermagic: "5edc3cfeea8b28010f4d442c2b4fb6b0"
 
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: openwrt/openwrt
+          repository: mj22226/openwrt
           ref: v${{ matrix.build_env.tag }}
           fetch-depth: 0
 
@@ -41,12 +41,12 @@ jobs:
           echo "pkgarch: ${{ matrix.build_env.pkgarch}}, target:${{ matrix.build_env.target}}, subtarget: ${{ matrix.build_env.subtarget}}"
 
           # Setup & install feeds
-          wget https://downloads.immortalwrt.org/releases/${{ matrix.build_env.tag }}/targets/${{ matrix.build_env.target}}/${{ matrix.build_env.subtarget}}/feeds.buildinfo -O feeds.conf
+          wget https://github.com/mj22226/openwrt/releases/download/rockchip-6.6/feeds.buildinfo -O feeds.conf
           echo "src-git awgopenwrt https://github.com/yury-sannikov/awg-openwrt.git" >> ./feeds.conf
           ./scripts/feeds update && ./scripts/feeds install -a
 
           # Setup config with AWG and dependencies
-          wget https://downloads.immortalwrt.org/releases/${{ matrix.build_env.tag }}/targets/${{ matrix.build_env.target}}/${{ matrix.build_env.subtarget}}/config.buildinfo -O .config
+          wget https://github.com/mj22226/openwrt/releases/download/rockchip-6.6/config.buildinfo -O .config
           echo "CONFIG_PACKAGE_kmod-amneziawg=m" >> .config
           echo "CONFIG_PACKAGE_amneziawg-tools=y" >> .config
           echo "CONFIG_PACKAGE_luci-app-amneziawg=y" >> .config
