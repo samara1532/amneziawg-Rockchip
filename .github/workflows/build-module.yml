@@ -1,17 +1,16 @@
 name: GitHub Actions Demo
 run-name: ${{ github.actor }} 8.0
- tags: 
-  - "8.0"
-  on: [push]
-jobs:
-
+on: [push]
+tags: 
+  - "v0.0.0"
+jobs: 
   build:
     name: "v${{ matrix.build_env.tag }} - ${{ matrix.build_env.pkgarch}} :: ${{ matrix.build_env.target}}/${{ matrix.build_env.subtarget}} build"
     runs-on: ubuntu-latest
     strategy:
       matrix:
         build_env:
-          - tag: "23.05.3"
+          - tag: "23.05.4"
             pkgarch: aarch64_generic
             target: rockchip
             subtarget: armv8
