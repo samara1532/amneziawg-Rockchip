@@ -1,5 +1,5 @@
 name: GitHub Actions Demo
-run-name: ${{ github.actor }} 9.0
+run-name: ${{ github.actor }} 9.5
 on: [push]
 jobs: 
   build:
@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         build_env:
-          - tag: "24.04-b202409170123"
+          - tag: "24.04_b202409170123"
             pkgarch: aarch64_generic
             target: rockchip
             subtarget: armv8
