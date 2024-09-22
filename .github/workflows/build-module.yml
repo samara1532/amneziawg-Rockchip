@@ -12,12 +12,12 @@ jobs:
             pkgarch: aarch64_generic
             target: rockchip
             subtarget: armv8
-            vermagic: "5f198da3c901d73ab34eb12249c2e714"
+            vermagic: "f6c36a814387db53e4bccdfb51c23a07"
 
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: mj22226/openwrt
+          repository: x-wrt/x-wrt
           ref: ${{ matrix.build_env.tag }}
           fetch-depth: 0
 
