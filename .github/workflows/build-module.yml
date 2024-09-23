@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         build_env:
-          - tag: "24.04_b202409170123"
+          - tag: "24.04_b202409140123"
             pkgarch: aarch64
             target: rockchip
             subtarget: armv8
