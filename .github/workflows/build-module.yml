@@ -38,7 +38,7 @@ jobs:
           echo "pkgarch: ${{ matrix.build_env.pkgarch}}, target:${{ matrix.build_env.target}}, subtarget: ${{ matrix.build_env.subtarget}}"
 
           # Setup & install feeds
-          wget https://raw.githubusercontent.com/samara1532/x-wrt_my/refs/heads/master/feeds.buildinfo -O feeds.conf
+          wget https://raw.githubusercontent.com/samara1532/x-wrt_my/refs/heads/master/feeds.conf.default -O feeds.conf
           echo "src-git awgopenwrt https://github.com/yury-sannikov/awg-openwrt.git" >> ./feeds.conf
           ./scripts/feeds update && ./scripts/feeds install -a
 
