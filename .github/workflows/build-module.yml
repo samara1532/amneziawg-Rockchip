@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: x-wrt/x-wrt
+          repository: openwrt/openwrt
           ref: ${{ matrix.build_env.tag }}
           fetch-depth: 0
 
