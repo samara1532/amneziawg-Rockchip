@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         build_env:
-          - tag: "v23.05.4"
+          - tag: "24.04_b202409170123"
             pkgarch: aarch64_generic
             target: rockchip
             subtarget: armv8
@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: immortalwrt/immortalwrt
+          repository: x-wrt/x-wrt/tree/24.04_b202409170123
           ref: ${{ matrix.build_env.tag }}
           fetch-depth: 0
 
@@ -36,11 +36,11 @@ jobs:
         run: |
           echo "pkgarch: ${{ matrix.build_env.pkgarch}}, target:${{ matrix.build_env.target}}, subtarget: ${{ matrix.build_env.subtarget}}"
           # Setup & install feeds
-          wget https://downloads.immortalwrt.org/releases/23.05.4/targets/rockchip/armv8/feeds.buildinfo -O feeds.conf
+          wget https://raw.githubusercontent.com/samara1532/x-wrt_my/refs/heads/master/feeds.conf.default -O feeds.conf
           echo "src-git awgopenwrt https://github.com/yury-sannikov/awg-openwrt.git" >> ./feeds.conf
           ./scripts/feeds update && ./scripts/feeds install -a
           # Setup config with AWG and dependencies
-          wget https://downloads.immortalwrt.org/releases/23.05.4/targets/rockchip/armv8/config.buildinfo -O .config
+          wget https://raw.githubusercontent.com/samara1532/x-wrt_my/refs/heads/master/target/linux/rockchip/armv8/config-6.6 -O .config
           echo "CONFIG_PACKAGE_kmod-amneziawg=m" >> .config
           echo "CONFIG_PACKAGE_amneziawg-tools=y" >> .config
           echo "CONFIG_PACKAGE_luci-app-amneziawg=y" >> .config
