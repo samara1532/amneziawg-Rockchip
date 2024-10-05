@@ -11,85 +11,86 @@ jobs:
     strategy:
       matrix:
         build_env:
-          - tag: "24.04_b202410041009"
+          - tag: "rockchip-6.6"
             pkgarch: aarch64_generic
             target: rockchip
             subtarget: armv8
+            vermagic: "973450eacd7dcf8d67d2acfa0ec70188"
+
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: x-wrt/x-wrt
-          ref: ${{ matrix.tag }}
+          repository: mj22226/openwrt
+          ref: ${{ matrix.build_env.tag }}
           fetch-depth: 0
 
-      - name: Update and install feeds for OpenWRT_v${{ matrix.tag }} ${{ matrix.build_env.target}}/${{ matrix.build_env.subtarget}}
+      - name: Cache Tools and Kernel
+        id: cache-tools-kernel
+        uses: actions/cache@v4
+        env:
+          cache-name: "cache-tools-kernel-${{ matrix.build_env.tag }}-${{ matrix.build_env.pkgarch}}-${{ matrix.build_env.target}}-${{ matrix.build_env.subtarget}}"
+        with:
+          path: "**"
+          key: ${{ runner.os }}-build-vm4-${{ env.cache-name }}
+          restore-keys: |
+            ${{ runner.os }}-build-vm4-cache-tools-kernel-${{ matrix.build_env.tag }}-${{ matrix.build_env.pkgarch}}-
+      - name: Building kernel and tools
+        #if: ${{ steps.cache-tools-kernel.outputs.cache-hit != 'true' }}
         run: |
-          pkgarch=${{ matrix.build_env.pkgarch}}
-          target=${{ matrix.build_env.target}}
-          subtarget=${{ matrix.build_env.subtarget}}
-
-          echo "pkgarch: ${pkgarch}, target: ${target}, subtarget: ${subtarget}"
-
-          rm -rf bin/packages/${pkgarch}/awgopenwrt/ || true
-          rm -rf bin/targets/${target}/${subtarget}/packages/  || true
-
-          wget https://raw.githubusercontent.com/samara1532/x-wrt_my/refs/heads/master/feeds.conf.default -O feeds.conf
-
-          echo "src-git awgopenwrt https://github.com/lolo6oT/awg-openwrt.git" >> ./feeds.conf
-
-          ./scripts/feeds update -a
-          ./scripts/feeds install -a
-
-          wget https://raw.githubusercontent.com/x-wrt/x-wrt/refs/tags/24.04_b202410041009/target/linux/rockchip/armv8/config-6.6 -O .config
-
-          make defconfig
-
-      - name: Make Download and World OpenWRT_v${{ matrix.tag }} ${{ matrix.build_env.target}}/${{ matrix.build_env.subtarget}}
-        run: |
-          export FORCE_UNSAFE_CONFIGURE=1
+          echo "pkgarch: ${{ matrix.build_env.pkgarch}}, target:${{ matrix.build_env.target}}, subtarget: ${{ matrix.build_env.subtarget}}"
+          # Setup & install feeds
+          wget https://github.com/mj22226/openwrt/releases/download/rockchip-6.6/feeds.buildinfo -O feeds.conf
+          echo "src-git awgopenwrt https://github.com/yury-sannikov/awg-openwrt.git" >> ./feeds.conf
+          ./scripts/feeds update && ./scripts/feeds install -a
+          # Setup config with AWG and dependencies
+          wget https://github.com/mj22226/openwrt/releases/download/rockchip-6.6/config.buildinfo -O .config
           echo "CONFIG_PACKAGE_kmod-amneziawg=m" >> .config
           echo "CONFIG_PACKAGE_amneziawg-tools=y" >> .config
-          echo "CONFIG_PACKAGE_luci-proto-amneziawg=y" >> .config
-          echo "CONFIG_PACKAGE_amneziawg-go=y" >> .config
-
-          if [[ $(uname -m) == "aarch64" ]]; then
-            echo 'CONFIG_GOLANG_EXTERNAL_BOOTSTRAP_ROOT="/usr/local/go/bin/go"' >> .config
-            echo 'CONFIG_GOLANG_BUILD_CACHE_DIR=""' >> .config
-          fi
-
+          echo "CONFIG_PACKAGE_luci-app-amneziawg=y" >> .config
+          echo "CONFIG_PACKAGE_kmod-crypto-lib-chacha20=m" >> .config
+          echo "CONFIG_PACKAGE_kmod-crypto-lib-chacha20poly1305=m" >> .config
+          echo "CONFIG_PACKAGE_kmod-crypto-chacha20poly1305=m" >> .config
           make defconfig
-
-          #make -j $(nproc) V=sc download world
-          echo "Make tools/install"
-          make tools/install -i -j $(nproc)
-          echo "Make toolchain/install"
-          make toolchain/install -i -j $(nproc)
-          echo "Make Kernel Compile"
-          make target/linux/compile -i -j $(nproc)
-
-      - name: Make ipks amnezia_${{ github.ref_name }} for original OpenWRT_v${{ matrix.tag }} ${{ matrix.build_env.target}}/${{ matrix.build_env.subtarget}}
+          echo "    > make tools/install"
+          make tools/install -i -j `nproc`
+          cat ./build_dir/target-*/linux-*/linux-*/.vermagic || true
+          echo "    > make toolchain/install"
+          make toolchain/install  -i -j `nproc`
+          cat ./build_dir/target-*/linux-*/linux-*/.vermagic || true
+          # compile kernel module
+          echo "    > make target/linux/compile"
+          make target/linux/compile  -i -j `nproc` V=s
+          VERMAGIC=`cat ./build_dir/target-*/linux-*/linux-*/.vermagic`
+          VERMAGIC_EXPECTED=${{ matrix.build_env.vermagic }}
+          if [ "$VERMAGIC" != "$VERMAGIC_EXPECTED" ]; then
+            echo Vermagic mismatch: $VERMAGIC, expected $VERMAGIC_EXPECTED
+            exit 1
+          fi
+      - name: Build AmneziaWG
         run: |
-          make -j $(nproc) package/amneziawg-tools/{clean,download,prepare,compile}
-          make -j $(nproc) package/amneziawg-go/{clean,download,prepare,compile}
-          make -j $(nproc) package/kmod-amneziawg/{clean,download,prepare,compile}
-          make -j $(nproc) package/luci-proto-amneziawg/{clean,download,prepare,compile}
-
-      - name: Prepare artifacts OpenWRT_v${{ matrix.tag }} ${{ matrix.build_env.target}}/${{ matrix.build_env.subtarget}}
+          VERMAGIC=`cat ./build_dir/target-*/linux-*/linux-*/.vermagic`
+          echo "Vermagic: $VERMAGIC"
+          VERMAGIC_EXPECTED=${{ matrix.build_env.vermagic }}
+          if [ "$VERMAGIC" != "$VERMAGIC_EXPECTED" ]; then
+            echo Vermagic mismatch: $VERMAGIC, expected $VERMAGIC_EXPECTED
+            exit 1
+          fi
+          # Ignore kmod build for some targets, replace with the awg-go
+          make package/kmod-amneziawg/{clean,download,prepare} V=s || true
+          make package/kmod-amneziawg/compile V=s || true
+          make package/luci-app-amneziawg/{clean,download,prepare}
+          make package/luci-app-amneziawg/compile V=s
+          make V=s package/amneziawg-tools/{clean,download,prepare}
+          make V=s package/amneziawg-tools/compile
+      - name: Prepare artifacts
         run: |
-          tag_name=${{ github.ref_name }}
+          tag_name=${{  github.ref_name }}
           mkdir -p awgrelease
-          postfix="${tag_name}_v${{ matrix.tag }}_${{ matrix.build_env.pkgarch}}_${{ matrix.build_env.target}}_${{ matrix.build_env.subtarget}}"
+          postfix="${tag_name}_v${{ matrix.build_env.tag }}_${{ matrix.build_env.pkgarch}}_${{ matrix.build_env.target}}_${{ matrix.build_env.subtarget}}"
           cp bin/packages/${{ matrix.build_env.pkgarch }}/awgopenwrt/amneziawg-tools_*.ipk awgrelease/amneziawg-tools_${postfix}.ipk
-          cp bin/packages/${{ matrix.build_env.pkgarch }}/awgopenwrt/amneziawg-go_*.ipk awgrelease/amneziawg-go_${postfix}.ipk
-          cp bin/packages/${{ matrix.build_env.pkgarch }}/awgopenwrt/luci-proto-amneziawg_*.ipk awgrelease/luci-proto-amneziawg_${postfix}.ipk
+          cp bin/packages/${{ matrix.build_env.pkgarch }}/awgopenwrt/luci-app-amneziawg_*.ipk awgrelease/luci-app-amneziawg_${postfix}.ipk
           cp bin/targets/${{ matrix.build_env.target}}/${{ matrix.build_env.subtarget}}/packages/kmod-amneziawg_*.ipk awgrelease/kmod-amneziawg_${postfix}.ipk
-
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: awgrelease/*.ipk
-
-      - name: Cleanup
-        run: |
-          rm feeds.conf || true
-          rm -rf awgrelease || true
