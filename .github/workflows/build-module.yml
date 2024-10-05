@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        tag: ['24.04_b202410041009']
+        tag: "24.04_b202410041009"
         build_env:
           - pkgarch: aarch64_generic
             target: rockchip
