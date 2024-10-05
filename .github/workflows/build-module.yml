@@ -1,4 +1,4 @@
-name: Create Release Mediatek Filogic
+name: Create Release aarch64_generic
 #on: [push]
 on:
   push:
