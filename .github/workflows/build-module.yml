@@ -11,16 +11,16 @@ jobs:
     strategy:
       matrix:
         build_env:
-          - tag: "rockchip-6.6"
+          - tag: "23.05.5"
             pkgarch: aarch64_generic
             target: rockchip
             subtarget: armv8
-            vermagic: "973450eacd7dcf8d67d2acfa0ec70188"
+            vermagic: "d7d17440beb683eb23ac31eaf1534f1a"
 
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: mj22226/openwrt
+          repository: openwrt/openwrt
           ref: ${{ matrix.build_env.tag }}
           fetch-depth: 0
 
@@ -39,11 +39,11 @@ jobs:
         run: |
           echo "pkgarch: ${{ matrix.build_env.pkgarch}}, target:${{ matrix.build_env.target}}, subtarget: ${{ matrix.build_env.subtarget}}"
           # Setup & install feeds
-          wget https://github.com/mj22226/openwrt/releases/download/rockchip-6.6/feeds.buildinfo -O feeds.conf
+          wget https://raw.githubusercontent.com/openwrt/openwrt/refs/tags/v23.05.5/feeds.conf.default -O feeds.conf
           echo "src-git awgopenwrt https://github.com/yury-sannikov/awg-openwrt.git" >> ./feeds.conf
           ./scripts/feeds update && ./scripts/feeds install -a
           # Setup config with AWG and dependencies
-          wget https://github.com/mj22226/openwrt/releases/download/rockchip-6.6/config.buildinfo -O .config
+          wget https://r5s.cooluc.com/releases/openwrt-23.05/v23.05.5/config.buildinfo -O .config
           echo "CONFIG_PACKAGE_kmod-amneziawg=m" >> .config
           echo "CONFIG_PACKAGE_amneziawg-tools=y" >> .config
           echo "CONFIG_PACKAGE_luci-app-amneziawg=y" >> .config
