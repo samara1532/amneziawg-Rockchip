@@ -43,7 +43,7 @@ jobs:
           echo "src-git awgopenwrt https://github.com/yury-sannikov/awg-openwrt.git" >> ./feeds.conf
           ./scripts/feeds update && ./scripts/feeds install -a
           # Setup config with AWG and dependencies
-          wget https://r5s.cooluc.com/releases/openwrt-23.05/v23.05.5/config.buildinfo -O .config
+          wget https://raw.githubusercontent.com/samara1532/x-wrt_my/refs/heads/master/pbr -O .config
           echo "CONFIG_PACKAGE_kmod-amneziawg=m" >> .config
           echo "CONFIG_PACKAGE_amneziawg-tools=y" >> .config
           echo "CONFIG_PACKAGE_luci-app-amneziawg=y" >> .config
