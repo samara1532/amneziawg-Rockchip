@@ -1,7 +1,5 @@
 name: Build rockchip openwrt firmware v6.6
-on: [push]
-tags:
-      - "rockchip-6.6"
+
 jobs:
     build:
         name: Build rockchip linux v6.6 images
