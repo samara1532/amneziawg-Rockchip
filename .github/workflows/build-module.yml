@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: openwrt/mj22226
+          repository: mj22226/openwrt
           ref: ${{ matrix.build_env.tag }}
           fetch-depth: 0
 
