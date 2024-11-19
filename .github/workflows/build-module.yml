@@ -82,14 +82,6 @@ jobs:
           make package/luci-app-amneziawg/compile V=s
           make V=s package/amneziawg-tools/{clean,download,prepare}
           make V=s package/amneziawg-tools/compile
-      - name: Prepare artifacts
-        run: |
-          tag_name=${{  github.ref_name }}
-          mkdir -p awgrelease
-          postfix="${tag_name}_v${{ matrix.build_env.tag }}_${{ matrix.build_env.pkgarch}}_${{ matrix.build_env.target}}_${{ matrix.build_env.subtarget}}"
-          cp bin/packages/${{ matrix.build_env.pkgarch }}/awgopenwrt/amneziawg-tools_*.apk awgrelease/amneziawg-tools_${postfix}.apk
-          cp bin/packages/${{ matrix.build_env.pkgarch }}/awgopenwrt/luci-app-amneziawg_*.apk awgrelease/luci-app-amneziawg_${postfix}.apk
-          cp bin/targets/${{ matrix.build_env.target}}/${{ matrix.build_env.subtarget}}/packages/kmod-amneziawg_*.apk awgrelease/kmod-amneziawg_${postfix}.apk
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
