@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         build_env:
-          - tag: "openwrt-24.10"
+          - tag: "master"
             pkgarch: aarch64_generic
             target: rockchip
             subtarget: armv8
