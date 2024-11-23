@@ -87,9 +87,9 @@ jobs:
           tag_name=${{  github.ref_name }}
           mkdir -p awgrelease
           postfix="${tag_name}_v${{ matrix.build_env.tag }}_${{ matrix.build_env.pkgarch}}_${{ matrix.build_env.target}}_${{ matrix.build_env.subtarget}}"
-          cp /home/runner/work/awg-nanoPi_R5C/awg-nanoPi_R5C/bin/packages/aarch64_generic/awgopenwrt/amneziawg-tools_*.apk awgrelease/amneziawg-tools_${postfix}.apk
-          cp /home/runner/work/awg-nanoPi_R5C/awg-nanoPi_R5C/bin/packages/aarch64_generic/awgopenwrt/luci-app-amneziawg_*.apk awgrelease/luci-app-amneziawg_${postfix}.apk
-          cp /home/runner/work/awg-nanoPi_R5C/awg-nanoPi_R5C/bin/targets/rockchip/armv8/packages/kmod-amneziawg_*.apk awgrelease/kmod-amneziawg_${postfix}.apk
+          cp /home/runner/work/awg-nanoPi_R5C/awg-nanoPi_R5C/bin/packages/aarch64_generic/awgopenwrt/amneziawg-tools-1.0.20240213-r1.apk awgrelease/amneziawg-tools_${postfix}.apk
+          cp /home/runner/work/awg-nanoPi_R5C/awg-nanoPi_R5C/bin/packages/aarch64_generic/awgopenwrt/luci-app-amneziawg-24.063.59395~e991b44.apk awgrelease/luci-app-amneziawg_${postfix}.apk
+          cp /home/runner/work/awg-nanoPi_R5C/awg-nanoPi_R5C/bin/targets/rockchip/armv8/packages/kmod-amneziawg-6.6.63-r1.apk awgrelease/kmod-amneziawg_${postfix}.apk
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
