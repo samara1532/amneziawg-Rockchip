@@ -34,9 +34,6 @@ jobs:
             echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
           fi
 
-      - name: Install dependencies
-        run: npm install
-
       - name: Generate Job Config
         id: generate-config
         run: node index.js ${{ env.VERSION }}
