@@ -1,0 +1,1 @@
+amneziawg_OpenWRT_Rockchip
