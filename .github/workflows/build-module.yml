@@ -1,6 +1,6 @@
 name: Create Release aarch64_generic
 #on: [push]
-on:
+#on:
   push:
     tags:
       - "*.*.*"
