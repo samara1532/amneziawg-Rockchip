@@ -11,16 +11,16 @@ jobs:
     strategy:
       matrix:
         build_env:
-          - tag: "master-v23.05"
+          - tag: "rockchip-6.6"
             pkgarch: aarch64_generic
             target: rockchip
             subtarget: armv8
-            vermagic: "613787b1582ceef482214e16ba6c4aef"
+            vermagic: "c97eaad335af218263fa9e5b4e7c56ae"
 
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: friendlyarm/friendlywrt
+          repository: mj22226/openwrt
           ref: ${{ matrix.build_env.tag }}
           fetch-depth: 0
 
@@ -41,12 +41,12 @@ jobs:
           echo "pkgarch: ${{ matrix.build_env.pkgarch}}, target:${{ matrix.build_env.target}}, subtarget: ${{ matrix.build_env.subtarget}}"
           
           # Setup & install feeds
-          wget https://raw.githubusercontent.com/friendlyarm/friendlywrt/refs/heads/master-v23.05/feeds.conf.default -O feeds.conf
-          echo "src-git awgopenwrt https://github.com/samara1532/awg-nanoPi_R5C.git" >> ./feeds.conf
+          wget https://github.com/mj22226/openwrt/releases/download/rockchip-6.6/feeds.buildinfo -O feeds.conf
+          echo "src-git awgopenwrt https://github.com/samara1532/amneziawg-Rockchip.git" >> ./feeds.conf
           ./scripts/feeds update && ./scripts/feeds install -a
           
           # Setup config with AWG and dependencies
-          wget https://raw.githubusercontent.com/friendlyarm/friendlywrt/refs/heads/master-v23.05/target/linux/rockchip/armv8/config-5.15 -O .config
+          wget https://github.com/mj22226/openwrt/releases/download/rockchip-6.6/config.buildinfo -O .config
           echo "CONFIG_PACKAGE_kmod-amneziawg=m" >> .config
           echo "CONFIG_PACKAGE_amneziawg-tools=y" >> .config
           echo "CONFIG_PACKAGE_luci-app-amneziawg=y" >> .config
@@ -92,11 +92,10 @@ jobs:
           tag_name=${{  github.ref_name }}
           mkdir -p awgrelease
           postfix="${tag_name}_v${{ matrix.build_env.tag }}_${{ matrix.build_env.pkgarch}}_${{ matrix.build_env.target}}_${{ matrix.build_env.subtarget}}"
-          cp bin/packages/mips_24kc/awgopenwrt/amneziawg-tools-*.ipk awgrelease/amneziawg-tools_${postfix}.ipk
-          cp bin/packages/mips_24kc/awgopenwrt/luci-app-amneziawg-*.ipk awgrelease/luci-app-amneziawg_${postfix}.ipk
-          cp bin/targets/mips_24kc/ath79_generic/packages/kmod-amneziawg-*.ipk awgrelease/kmod-amneziawg_${postfix}.ipk
-          
+          cp bin/packages/aarch64_generic/awgopenwrt/amneziawg-tools-*.apk awgrelease/amneziawg-tools_${postfix}.apk
+          cp bin/packages/aarch64_generic/awgopenwrt/luci-app-amneziawg-*.apk awgrelease/luci-app-amneziawg_${postfix}.apk
+          cp bin/targets/rockchip/armv8/packages/kmod-amneziawg-*.apk awgrelease/kmod-amneziawg_${postfix}.apk
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: awgrelease/*.ipk
+          files: awgrelease/*.apk
