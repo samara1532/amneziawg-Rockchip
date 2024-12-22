@@ -15,7 +15,7 @@ jobs:
             pkgarch: aarch64_generic
             target: rockchip
             subtarget: armv8
-            vermagic: "1b326fa562089ee78cb22ffbe989c420"
+            vermagic: "e4b0ddba783aa46d81253ebb31af2843"
 
     steps:
       - uses: actions/checkout@v4
