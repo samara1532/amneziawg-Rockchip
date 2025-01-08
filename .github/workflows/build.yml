@@ -53,16 +53,22 @@ jobs:
           echo "CONFIG_PACKAGE_kmod-crypto-lib-chacha20=m" >> .config
           echo "CONFIG_PACKAGE_kmod-crypto-lib-chacha20poly1305=m" >> .config
           echo "CONFIG_PACKAGE_kmod-crypto-chacha20poly1305=m" >> .config
+          
           make defconfig
+          
           echo "    > make tools/install"
           make tools/install -i -j `nproc`
+          
           cat ./build_dir/target-*/linux-*/linux-*/.vermagic || true
+          
           echo "    > make toolchain/install"
           make toolchain/install  -i -j `nproc`
+          
           cat ./build_dir/target-*/linux-*/linux-*/.vermagic || true
           # compile kernel module
           echo "    > make target/linux/compile"
           make target/linux/compile  -i -j `nproc` V=s
+          
           VERMAGIC=`cat ./build_dir/target-*/linux-*/linux-*/.vermagic`
           VERMAGIC_EXPECTED=${{ matrix.build_env.vermagic }}
           if [ "$VERMAGIC" != "$VERMAGIC_EXPECTED" ]; then
