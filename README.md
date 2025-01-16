@@ -1,4 +1,4 @@
-AmneziaWG_Rockchip
+AmneziaWG_mj22226/openwrt_Rockchip
 ---------------------
 [AmneziaWG for OpenWrt](https://github.com/samara1531/amneziawg-openwrt)
 ---------------------
