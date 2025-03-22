@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         build_env:
-          - tag: "rockchip-6.13.y"
+          - tag: "linux-6.13.y"
             pkgarch: aarch64_generic
             target: rockchip
             subtarget: armv8
