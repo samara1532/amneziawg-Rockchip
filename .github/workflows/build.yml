@@ -15,7 +15,7 @@ jobs:
             pkgarch: aarch64_generic
             target: rockchip
             subtarget: armv8
-            vermagic: "3fada69646f801f3466f129a2396ebf9"
+            vermagic: "68573cdcf353cd34f221eaf318b24588"
 
     steps:
       - uses: actions/checkout@v4
@@ -38,6 +38,7 @@ jobs:
         run: |
           python3 -m pip install --upgrade pip
           python3 -m pip install pyelftools
+
       - name: Building kernel and tools
         #if: ${{ steps.cache-tools-kernel.outputs.cache-hit != 'true' }}
         run: |
