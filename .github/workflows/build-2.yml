@@ -6,15 +6,14 @@ on:
       - "*.*.*"
 jobs: 
   build:
-    name: "${{ matrix.build_env.pkgarch}} :: ${{ matrix.build_env.target}}/${{ matrix.build_env.subtarget}} build"
+    name: "${{ matrix.pkgarch }} :: ${{ matrix.target }}/${{ matrix.subtarget }} build"
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        build_env:
-            pkgarch: x86_64
-            target: x86
-            subtarget: 64
-            vermagic: "348ebc762ef9e5b783ead2930262d588"
+            pkgarch: [x86_64]
+            target: [x86]
+            subtarget: [64]
+            vermagic: ["348ebc762ef9e5b783ead2930262d588"]
 
     steps:
       - name: Get snapshot commit SHA and device ARCH
