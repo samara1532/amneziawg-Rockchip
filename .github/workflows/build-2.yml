@@ -17,17 +17,17 @@ jobs:
             vermagic: "348ebc762ef9e5b783ead2930262d588"
 
     steps:
-      - uses: actions/checkout@v4
-        with:
-          repository: openwrt/openwrt
-          fetch-depth: 0
-          
       - name: Get snapshot commit SHA and device ARCH
         run: |
           SNAPSHOT_COMMIT_SHA=$(wget -qO- "https://downloads.openwrt.org/snapshots/targets/${{ matrix.build_env.target}}/${{ matrix.build_env.subtarget}}/version.buildinfo" | cut -d'-' -f2)
           echo "Snapshot commit SHA: $SNAPSHOT_COMMIT_SHA"
           echo "SNAPSHOT_COMMIT_SHA=$SNAPSHOT_COMMIT_SHA" >> $GITHUB_ENV
           echo "DEVICE_ARCH=${{ matrix.build_env.pkgarch }}" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v4
+        with:
+          repository: openwrt/openwrt
+          fetch-depth: 0
 
       - name: Checkout snapshot commit in openwrt repo
         run: git checkout ${{ env.SNAPSHOT_COMMIT_SHA}}
