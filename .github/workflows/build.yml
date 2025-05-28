@@ -45,12 +45,12 @@ jobs:
           echo "pkgarch: ${{ matrix.build_env.pkgarch}}, target:${{ matrix.build_env.target}}, subtarget: ${{ matrix.build_env.subtarget}}"
           
           # Setup & install feeds
-          wget https://github.com/mj22226/openwrt/releases/download/rockchip-6.6/feeds.buildinfo -O feeds.conf
+          wget https://github.com/mj22226/openwrt/releases/download/rockchip-24.10/feeds.buildinfo -O feeds.conf
           echo "src-git awgopenwrt https://github.com/samara1532/amneziawg-Rockchip.git" >> ./feeds.conf
           ./scripts/feeds update && ./scripts/feeds install -a
           
           # Setup config with AWG and dependencies
-          wget https://github.com/mj22226/openwrt/releases/download/rockchip-6.6/config.buildinfo -O .config
+          wget https://github.com/mj22226/openwrt/releases/download/rockchip-24.10/config.buildinfo -O .config
           echo "CONFIG_PACKAGE_kmod-amneziawg=m" >> .config
           echo "CONFIG_PACKAGE_amneziawg-tools=y" >> .config
           echo "CONFIG_PACKAGE_luci-app-amneziawg=y" >> .config
