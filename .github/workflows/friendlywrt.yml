@@ -2,8 +2,8 @@ name: Create Release on Tag
 # on: [workflow_dispatch]
 on:
   push:
-    tags:
-      - "friendlywrt.*.*.*"
+    #tags:
+      #- "friendlywrt.*.*.*"
 
 jobs:
   build:
