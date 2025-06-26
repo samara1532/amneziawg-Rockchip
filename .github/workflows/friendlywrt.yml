@@ -2,33 +2,33 @@ name: Create Release on Tag
 # on: [workflow_dispatch]
 on:
   push:
-    #tags:
-      #- "friendlywrt.*.*.*"
-
+    tags:
+       "friendlywrt.*.*.*"
 jobs:
   build:
-    name: "FriendlyWrt build: ${{ matrix.build_env.pkgarch}} :: ${{ matrix.build_env.target}}/${{ matrix.build_env.subtarget}}"
+    name: "v${{ matrix.build_env.tag }} - ${{ matrix.build_env.pkgarch}} :: ${{ matrix.build_env.target}}/${{ matrix.build_env.subtarget}} build"
     runs-on: ubuntu-latest
     strategy:
       matrix:
         build_env:
-          - tag: "24.10.1"
+          - tag: "rockchip-6.6"
             pkgarch: aarch64_generic
             target: rockchip
             subtarget: armv8
+            vermagic: "3d87fa32d9aace8c2ddc2c539721f4a1"
 
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: friendlyarm/friendlywrt
-          ref: master-v24.10
+          repository: openwrt/openwrt
+          ref: v${{ matrix.build_env.tag }}
           fetch-depth: 0
 
       - name: Cache Tools and Kernel
         id: cache-tools-kernel
         uses: actions/cache@v4
         env:
-          cache-name: "cache-friendlywrt-${{ matrix.build_env.pkgarch}}-${{ matrix.build_env.target}}-${{ matrix.build_env.subtarget}}"
+          cache-name: "cache-tools-kernel-${{ matrix.build_env.tag }}-${{ matrix.build_env.pkgarch}}-${{ matrix.build_env.target}}-${{ matrix.build_env.subtarget}}"
         with:
           path: "**"
           key: ${{ runner.os }}-build-vm4-${{ env.cache-name }}
@@ -42,7 +42,7 @@ jobs:
 
           # Setup & install feeds
           wget https://downloads.openwrt.org/releases/${{ matrix.build_env.tag }}/targets/${{ matrix.build_env.target}}/${{ matrix.build_env.subtarget}}/feeds.buildinfo -O feeds.conf
-          echo "src-git awgopenwrt https://github.com/samara1532/amneziawg-Rockchip/awg-openwrt.git" >> ./feeds.conf
+          echo "src-git awgopenwrt https://github.com/samara1532/amneziawg-Rockchip.git" >> ./feeds.conf
           ./scripts/feeds update && ./scripts/feeds install -a
 
           # Setup config with AWG and dependencies
@@ -70,10 +70,25 @@ jobs:
           echo "    > make target/linux/compile"
           make target/linux/compile  -i -j `nproc` V=s
 
+          VERMAGIC=`cat ./build_dir/target-*/linux-*/linux-*/.vermagic`
+          VERMAGIC_EXPECTED=${{ matrix.build_env.vermagic }}
 
+          if [ "$VERMAGIC" != "$VERMAGIC_EXPECTED" ]; then
+            echo Vermagic mismatch: $VERMAGIC, expected $VERMAGIC_EXPECTED
+            exit 1
+          fi
 
       - name: Build AmneziaWG
         run: |
+          VERMAGIC=`cat ./build_dir/target-*/linux-*/linux-*/.vermagic`
+          echo "Vermagic: $VERMAGIC"
+
+          VERMAGIC_EXPECTED=${{ matrix.build_env.vermagic }}
+
+          if [ "$VERMAGIC" != "$VERMAGIC_EXPECTED" ]; then
+            echo Vermagic mismatch: $VERMAGIC, expected $VERMAGIC_EXPECTED
+            exit 1
+          fi
 
           # Ignore kmod build for some targets, replace with the awg-go
           make package/kmod-amneziawg/{clean,download,prepare} V=s || true
