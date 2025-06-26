@@ -3,7 +3,7 @@ name: Create Release on Tag
 on:
   push:
     tags:
-       "wrt.*.*.*"
+       "w*.*.*"
 jobs:
   build:
     name: "v${{ matrix.build_env.tag }} - ${{ matrix.build_env.pkgarch}} :: ${{ matrix.build_env.target}}/${{ matrix.build_env.subtarget}} build"
@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         build_env:
-          - tag: "rockchip-6.6"
+          - tag: "24.10.2"
             pkgarch: aarch64_generic
             target: rockchip
             subtarget: armv8
