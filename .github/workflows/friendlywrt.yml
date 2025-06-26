@@ -1,9 +1,9 @@
-name: Create Release on Tag
-# on: [workflow_dispatch]
+name: Create Release aarch64_generic_OFF
+#on: [push]
 on:
   push:
     tags:
-      - "v*.*.*"
+          - "*.*.*"
 
 jobs:
   build:
