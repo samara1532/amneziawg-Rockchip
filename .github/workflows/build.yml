@@ -42,7 +42,7 @@ jobs:
           
           # Setup & install feeds
           wget https://github.com/mj22226/openwrt/releases/download/rockchip-6.12/feeds.buildinfo -O feeds.conf
-          echo "src-git awgopenwrt https://github.com/samara1532/amneziawg-Rockchip.git,6.12.xx" >> ./feeds.conf
+          echo "src-git awgopenwrt https://github.com/samara1532/amneziawg-Rockchip.git;6.12.xx" >> ./feeds.conf
           ./scripts/feeds update && ./scripts/feeds install -a
           
           # Setup config with AWG and dependencies
